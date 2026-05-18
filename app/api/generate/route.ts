@@ -1,6 +1,6 @@
 import { buildGraph } from "@/lib/agents/graph";
-import { ScriptData } from "@/store/useScriptStore";
-import { randomUUID } from "crypto";
+import Script, { toScriptData } from "@/lib/db/models/Script";
+import connectDB from "@/lib/db/mongodb";
 
 // Use Node.js runtime — LangGraph and Groq SDK require Node APIs
 export const runtime = "nodejs";
@@ -43,16 +43,20 @@ export async function POST(request: Request) {
       dialogue: result.dialogues[scene.sceneNumber] ?? [],
     }));
 
-    const scriptData: ScriptData = {
-      id: randomUUID(),
+    await connectDB();
+    const newScriptData = await Script.create({
       title: result.story.title,
       tagline: result.story.tagline,
       characters: result.characters,
       scenes: scenesWithDialogue,
-    };
+      situation: situation.trim(),
+      mood: mood.trim(),
+    });
 
-    console.log(`[API] Done — "${scriptData.title}" (${scriptData.scenes.length} scenes)`);
-    return Response.json(scriptData);
+    const finalScriptData = toScriptData(newScriptData);
+
+    console.log(`[API] Done — "${finalScriptData.title}"`);
+    return Response.json(finalScriptData);
 
   } catch (error: any) {
     console.error("[API] Generation error:", error);

@@ -1,45 +1,77 @@
-import { PanelLeft, Plus, LogOut } from "lucide-react"; // Added LogOut icon for collapsed state
-import { motion, AnimatePresence } from "framer-motion"; // Use framer-motion for AnimatePresence
-import Image from "next/image";
-import { useState } from "react";
+"use client"
 
-// Adjusted HistoryTab to handle the collapsed state gracefully
-const HistoryTab = ({ open }: { open: boolean }) => {
+import { PanelLeft, Plus, LogOut } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useScriptStore } from "@/store/useScriptStore";
+import { HistoryItem } from "@/lib/db/models/Script";
+
+// ── HistoryTab ────────────────────────────────────────────────────────────────
+
+const HistoryTab = ({
+  open,
+  item,
+  onClick,
+}: {
+  open: boolean;
+  item: HistoryItem;
+  onClick: () => void;
+}) => {
   return (
-    <div 
-      className={`bg-white border border-gray-200 rounded-lg flex items-center relative overflow-hidden shrink-0 transition-all ${
-        open ? "h-10 px-3 w-full" : "h-10 w-10 mx-auto"
+    <div
+      onClick={onClick}
+      className={`bg-white border border-gray-200 rounded-lg flex flex-col justify-center relative overflow-hidden shrink-0 transition-all cursor-pointer hover:border-green-400 hover:bg-green-50 ${
+        open ? "h-14 px-3 w-full" : "h-10 w-10 mx-auto"
       }`}
     >
-       <div className="w-full h-full opacity-10 bg-[repeating-linear-gradient(45deg,#94a3b8_0px,#94a3b8_2px,transparent_2px,transparent_6px)]"></div>
+      {open ? (
+        <>
+          <p className="font-serif text-sm font-semibold text-slate-800 truncate leading-tight">
+            {item.title}
+          </p>
+          <p className="text-xs text-gray-400 truncate">{item.mood}</p>
+        </>
+      ) : (
+        // Collapsed: show first letter as avatar
+        <span className="font-serif font-bold text-green-600 text-center w-full">
+          {item.title.charAt(0)}
+        </span>
+      )}
     </div>
   );
 };
 
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+
 export const Sidebar = () => {
   const [open, setOpen] = useState(true);
+  const { history, fetchHistory, loadFromHistory, currentScript } = useScriptStore();
+
+  // Fetch history from DB on every mount — this is what persists over reloads
+  useEffect(() => {
+    fetchHistory();
+  }, []);
 
   return (
-    <motion.aside 
+    <motion.aside
       initial={false}
-      // Animate the width smoothly instead of toggling Tailwind classes
-      animate={{ width: open ? 256 : 80 }} 
+      animate={{ width: open ? 256 : 80 }}
       className="flex-shrink-0 bg-white border-r border-gray-200 flex flex-col h-full p-4 overflow-hidden"
     >
       {/* Heading */}
-      <div className={`flex items-center mb-5 ${open ? "justify-between" : "justify-center flex-col gap-4"}`}>      
-        <div className="flex items-center gap-2 overflow-hidden">      
+      <div className={`flex items-center mb-5 ${open ? "justify-between" : "justify-center flex-col gap-4"}`}>
+        <div className="flex items-center gap-2 overflow-hidden">
           <Image
             src="/logo2.png"
-            alt="Profile Pic"
-            width={open ? 60 : 40} // Shrink logo slightly when closed
+            alt="FilmiScript Logo"
+            width={open ? 60 : 40}
             height={open ? 60 : 40}
             className="shrink-0 transition-all"
           />
-          {/* Smoothly show/hide the text */}
           <AnimatePresence>
             {open && (
-              <motion.h1 
+              <motion.h1
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: "auto" }}
                 exit={{ opacity: 0, width: 0 }}
@@ -56,35 +88,44 @@ export const Sidebar = () => {
           className="w-5 h-5 cursor-pointer text-gray-500 hover:text-gray-900 shrink-0 transition-colors"
         />
       </div>
-      
+
       {/* New Chat Button */}
-      <button 
+      <button
+        onClick={() => useScriptStore.setState({ currentScript: null })}
         className={`flex items-center justify-center gap-2 w-full bg-green-500 text-white font-serif py-2 rounded-lg mb-6 transition-all hover:bg-green-600 shadow-sm cursor-pointer ${
           open ? "px-4 text-xl" : "px-0 text-sm"
         }`}
       >
-        <Plus className="w-5 h-5 shrink-0" /> 
+        <Plus className="w-5 h-5 shrink-0" />
         {open && <span className="whitespace-nowrap">New Chat</span>}
       </button>
 
       {/* History Section */}
-      <div className="flex flex-col gap-3 flex-1 overflow-y-auto overflow-x-hidden no-scrollbar">
+      <div className="flex flex-col gap-2 flex-1 overflow-y-auto overflow-x-hidden no-scrollbar">
         {open && (
           <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">
             History
           </h3>
         )}
-        
-        {/* Dashed Wireframe Boxes */}
-        <HistoryTab open={open} />
-        <HistoryTab open={open} />
-        <HistoryTab open={open} />
-        <HistoryTab open={open} />
-        <HistoryTab open={open} />
+
+        {history.length === 0 && open && (
+          <p className="text-xs text-gray-400 text-center mt-4">
+            No scripts yet. Generate one!
+          </p>
+        )}
+
+        {history.map((item) => (
+          <HistoryTab
+            key={item.id}
+            open={open}
+            item={item}
+            onClick={() => loadFromHistory(item.id)}
+          />
+        ))}
       </div>
 
       {/* Log Out Button */}
-      <button 
+      <button
         className={`mt-auto border border-gray-300 bg-zinc-100 hover:bg-zinc-200 py-2 rounded-lg transition-colors font-medium font-serif cursor-pointer flex items-center justify-center gap-2 ${
           open ? "text-lg px-4" : "text-sm px-0"
         }`}

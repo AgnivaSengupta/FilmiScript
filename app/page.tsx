@@ -7,16 +7,12 @@ import { InputBox } from "../components/InputBox";
 import { RightSideBar } from "../components/RightSidebar";
 import { Share2 } from "lucide-react";
 import { useScriptStore } from "@/store/useScriptStore";
+import Image from "next/image";
 
 // --- Variants for smooth motion (optional) ---
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } },
 };
 
 export default function Dashboard() {
@@ -53,11 +49,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/*<div className="overflow-y-auto">
-            <SceneCard sceneNumber={1} />
-            <SceneCard sceneNumber={2} />
-            <SceneCard sceneNumber={3} />
-          </div>*/}
 
           <div className="space-y-6 pb-20">
             {isLoading ? (
@@ -65,8 +56,13 @@ export default function Dashboard() {
                 <div className="h-40 bg-white border border-gray-200 rounded-xl"></div>
                 <div className="h-40 bg-white border border-gray-200 rounded-xl"></div>
               </div>
+            ) : !currentScript ? (
+              // No script generated yet — show empty state
+              <div className="flex flex-col items-center justify-center pt-16 opacity-50">
+                <Image src="/filler2.png" alt="No script yet" width={300} height={300} />
+              </div>
             ) : (
-              currentScript?.scenes.map((scene) => (
+              currentScript.scenes.map((scene) => (
                 <SceneCard key={scene.sceneNumber} scene={scene} />
               ))
             )}

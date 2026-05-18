@@ -17,19 +17,23 @@ interface ScriptStore {
   currentScript: ScriptData | null;
   history: HistoryItem[];
   isLoading: boolean;
+  regeneratingSceneNumber: number | null;  // tracks which scene is spinning
   error: string | null;
 
   generateScript: (situation: string, mood: string) => Promise<void>;
   fetchHistory: () => Promise<void>;
   loadFromHistory: (id: string) => void;
+  regenerateScene: (sceneNumber: number) => Promise<void>;
+  deleteScript: (id: string) => Promise<void>;
   clearError: () => void;
 }
 
 
 export const useScriptStore = create<ScriptStore>((set, get) => ({
   currentScript: null,
-  history: [], // You can later initialize this from localStorage
+  history: [],
   isLoading: false,
+  regeneratingSceneNumber: null,
   error: null,
 
   generateScript: async (situation, mood) => {
@@ -84,6 +88,60 @@ export const useScriptStore = create<ScriptStore>((set, get) => ({
       set({ currentScript: script });
     } catch (err: any) {
       set({ error: err.message || 'Failed to load script' });
+    }
+  },
+
+  regenerateScene: async (sceneNumber) => {
+    const { currentScript } = get();
+    if (!currentScript) return;
+
+    set({ regeneratingSceneNumber: sceneNumber, error: null });
+    try {
+      const response = await fetch(
+        `/api/scripts/${currentScript.id}/regenerate-scene`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sceneNumber }),
+        }
+      );
+      if (!response.ok) throw new Error('Regeneration failed');
+
+      const newDialogue = await response.json();
+
+      // Swap only the affected scene's dialogue — leave everything else untouched
+      set((state) => ({
+        regeneratingSceneNumber: null,
+        currentScript: state.currentScript
+          ? {
+              ...state.currentScript,
+              scenes: state.currentScript.scenes.map((s) =>
+                s.sceneNumber === sceneNumber
+                  ? { ...s, dialogue: newDialogue }
+                  : s
+              ),
+            }
+          : null,
+      }));
+    } catch (err: any) {
+      set({ error: err.message || 'Regeneration failed', regeneratingSceneNumber: null });
+    }
+  },
+
+  deleteScript: async (id) => {
+    try {
+      const response = await fetch(`/api/scripts/${id}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Failed to delete script');
+
+      set((state) => ({
+        // Remove from sidebar list
+        history: state.history.filter((h) => h.id !== id),
+        // Clear main view if the deleted script was being shown
+        currentScript:
+          state.currentScript?.id === id ? null : state.currentScript,
+      }));
+    } catch (err: any) {
+      set({ error: err.message || 'Failed to delete script' });
     }
   },
 

@@ -1,6 +1,7 @@
 import { motion } from "motion/react"
 import { CharacterSketch } from "./CharacterSketch"
 import { AvatarCard } from "./AvatarCards"
+import { AvatarSection } from "./AvatarSection"
 
 export const RightSideBar = () => {
   return (
@@ -13,7 +14,7 @@ export const RightSideBar = () => {
       <CharacterSketch/>
 
       {/* Avatars Section */}
-      <div className="rounded-xl border border-gray-200 p-5 bg-white shadow-sm">
+      {/*<div className="rounded-xl border border-gray-200 p-5 bg-white shadow-sm">
         <h3 className="text-2xl font-serif text-slate-900 mb-4">Avatars</h3>
 
         <div className="space-y-3">
@@ -22,7 +23,9 @@ export const RightSideBar = () => {
           <AvatarCard />
           <AvatarCard />
         </div>
-      </div>
+      </div>*/}
+
+      <AvatarSection/>
     </motion.aside>
   )
 }

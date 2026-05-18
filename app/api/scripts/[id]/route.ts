@@ -33,3 +33,36 @@ export async function GET(
     );
   }
 }
+
+/**
+ * DELETE /api/scripts/[id]
+ * Permanently removes the script document from MongoDB.
+ */
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    if (!Types.ObjectId.isValid(id)) {
+      return Response.json({ error: "Invalid script ID" }, { status: 400 });
+    }
+
+    await connectDB();
+
+    const deleted = await Script.findByIdAndDelete(id);
+    if (!deleted) {
+      return Response.json({ error: "Script not found" }, { status: 404 });
+    }
+
+    console.log(`[API] Deleted script "${deleted.title}" (${id})`);
+    return Response.json({ success: true });
+
+  } catch (error: any) {
+    return Response.json(
+      { error: error.message ?? "Failed to delete script" },
+      { status: 500 }
+    );
+  }
+}

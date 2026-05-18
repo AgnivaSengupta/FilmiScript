@@ -1,6 +1,7 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
+import { Character } from "@/store/useScriptStore";
 
-export const AvatarCard = () => {
+export const AvatarCard = ({character}: {character: Character}) => {
 
   const num = Math.floor(Math.random() * 9) + 1;
   return (
@@ -12,12 +13,10 @@ export const AvatarCard = () => {
           className="w-13 h-13 object-cover"
         />
       </Avatar>
-      <div className="flex-1 space-y-1.5">
-        <div className="h-1.5 w-full bg-gray-200 rounded-full"></div>
-        <div className="h-1.5 w-full bg-gray-200 rounded-full"></div>
-        <div className="h-1.5 w-full bg-gray-200 rounded-full"></div>
-        <div className="h-1.5 w-full bg-gray-200 rounded-full"></div>
-        <div className="h-1.5 w-2/3 bg-gray-200 rounded-full"></div>
+      <div className="flex-1 space-y-1.5 text-sm">
+        <h1><span className="font-bold">Name: </span>{character.name}</h1>
+        <h2><span className="font-bold">Role: </span>{character.role}</h2>
+        <p className="text-sm">{ character.description}</p>
       </div>
     </div>
   )

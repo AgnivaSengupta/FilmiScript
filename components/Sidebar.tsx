@@ -1,6 +1,6 @@
 "use client"
 
-import { PanelLeft, Plus, LogOut } from "lucide-react";
+import { PanelLeft, Plus, LogOut, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -13,27 +13,38 @@ const HistoryTab = ({
   open,
   item,
   onClick,
+  onDelete,
 }: {
   open: boolean;
   item: HistoryItem;
   onClick: () => void;
+  onDelete: () => void;
 }) => {
   return (
     <div
       onClick={onClick}
-      className={`bg-white border border-gray-200 rounded-lg flex flex-col justify-center relative overflow-hidden shrink-0 transition-all cursor-pointer hover:border-green-400 hover:bg-green-50 ${
+      className={`group bg-white border border-gray-200 rounded-lg flex items-center relative overflow-hidden shrink-0 transition-all cursor-pointer hover:border-green-400 hover:bg-green-50 ${
         open ? "h-14 px-3 w-full" : "h-10 w-10 mx-auto"
       }`}
     >
       {open ? (
         <>
-          <p className="font-serif text-sm font-semibold text-slate-800 truncate leading-tight">
-            {item.title}
-          </p>
-          <p className="text-xs text-gray-400 truncate">{item.mood}</p>
+          <div className="flex-1 min-w-0">
+            <p className="font-serif text-sm font-semibold text-slate-800 truncate leading-tight">
+              {item.title}
+            </p>
+            <p className="text-xs text-gray-400 truncate">{item.mood}</p>
+          </div>
+          {/* Trash icon — visible on hover only */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(); }}
+            title="Delete script"
+            className="ml-2 p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-100 hover:text-red-500 transition-all shrink-0"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
         </>
       ) : (
-        // Collapsed: show first letter as avatar
         <span className="font-serif font-bold text-green-600 text-center w-full">
           {item.title.charAt(0)}
         </span>
@@ -46,7 +57,7 @@ const HistoryTab = ({
 
 export const Sidebar = () => {
   const [open, setOpen] = useState(true);
-  const { history, fetchHistory, loadFromHistory, currentScript } = useScriptStore();
+  const { history, fetchHistory, loadFromHistory, currentScript, deleteScript } = useScriptStore();
 
   // Fetch history from DB on every mount — this is what persists over reloads
   useEffect(() => {
@@ -120,6 +131,7 @@ export const Sidebar = () => {
             open={open}
             item={item}
             onClick={() => loadFromHistory(item.id)}
+            onDelete={() => deleteScript(item.id)}
           />
         ))}
       </div>

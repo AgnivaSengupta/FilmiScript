@@ -5,9 +5,10 @@ import { Sidebar } from "../components/Sidebar";
 import { SceneCard } from "../components/SceneCard";
 import { InputBox } from "../components/InputBox";
 import { RightSideBar } from "../components/RightSidebar";
-import { Share2 } from "lucide-react";
+import { Share2, Check } from "lucide-react";
 import { useScriptStore } from "@/store/useScriptStore";
 import Image from "next/image";
+import { useState } from "react";
 
 // --- Variants for smooth motion (optional) ---
 const containerVariants = {
@@ -17,6 +18,16 @@ const containerVariants = {
 
 export default function Dashboard() {
   const { currentScript, isLoading } = useScriptStore();
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    if (!currentScript) return;
+    const url = `${window.location.origin}/drama/${currentScript.id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-zinc-50 font-sans text-slate-800">
@@ -44,8 +55,20 @@ export default function Dashboard() {
               </p>
             </div>
 
-            <div className="p-1 rounded-sm border hover:bg-green-100 hover:text-green-600 cursor-pointer">
-              <Share2 className="w-5 h-5" />
+            <div
+              onClick={handleShare}
+              title={currentScript ? `Share: /drama/${currentScript.id}` : "Generate a script first"}
+              className={`p-1 rounded-sm border transition-all ${
+                currentScript
+                  ? copied
+                    ? "bg-green-100 text-green-600 border-green-300"
+                    : "hover:bg-green-100 hover:text-green-600 cursor-pointer border-gray-200"
+                  : "opacity-30 cursor-not-allowed border-gray-200"
+              }`}
+            >
+              {copied
+                ? <Check className="w-5 h-5" />
+                : <Share2 className="w-5 h-5" />}
             </div>
           </div>
 

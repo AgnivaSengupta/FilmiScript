@@ -1,6 +1,6 @@
 import { GraphState } from "./state";
 import { llmDialogue, withRetry, parseJsonSafely, sleep } from "./llm";
-import { Dialogue } from "@/store/useScriptStore";
+import { Character, Dialogue, Scene } from "@/store/useScriptStore";
 
 type AgentState = typeof GraphState.State;
 
@@ -91,4 +91,65 @@ Return ONLY a valid JSON array. No markdown, no explanation.`;
   }
 
   return { dialogues };
+}
+
+// ── Standalone helper (used by the regenerate-scene API) ─────────────────────
+
+/**
+ * Generates fresh Bollywood dialogues for a SINGLE scene.
+ * Called directly by the regenerate API route — no full graph run needed.
+ */
+export async function generateSingleSceneDialogue(params: {
+  scene: Pick<Scene, "sceneNumber" | "title" | "description" | "charactersPresent">;
+  characters: Pick<Character, "name" | "role" | "personality" | "description">[];
+  storyTitle: string;
+  storySituation: string; // user's original situation (used as plot context)
+  mood: string;
+}): Promise<Dialogue[]> {
+  const { scene, characters, storyTitle, storySituation, mood } = params;
+
+  const characterBible = characters
+    .map(
+      (c) =>
+        `• ${c.name} (${c.role})\n  Personality: ${c.personality}\n  Description: ${c.description}`,
+    )
+    .join("\n\n");
+
+  const prompt = `You are a Bollywood dialogue writer specializing in ${mood} dramas.
+
+=== CHARACTER BIBLE (Follow personalities STRICTLY) ===
+${characterBible}
+
+=== STORY CONTEXT ===
+Title: ${storyTitle}
+Situation: ${storySituation}
+
+=== CURRENT SCENE ===
+Scene ${scene.sceneNumber}: "${scene.title}"
+What happens: ${scene.description}
+Characters present: ${scene.charactersPresent.join(", ")}
+
+=== YOUR TASK ===
+Write 3-4 FRESH Bollywood-style dialogue lines for this scene.
+This is a REGENERATION — make it different from any previous version.
+
+Rules:
+1. ONLY use characters from this list: ${JSON.stringify(scene.charactersPresent)}
+2. Each character MUST speak in their established personality from the Character Bible above
+3. Naturally weave in Hindi/Urdu phrases (e.g., "Yaar", "Bas!", "Tum samjhe nahi", "Kya baat hai")
+4. Use dramatic pauses with "..." and stage directions in [square brackets]
+5. Build emotional tension matching mood: "${mood}"
+6. Dialogues should feel cinematic, not conversational
+
+Return a JSON array where each item has:
+- "speaker": character name (must be from the present characters list)
+- "line": the full dialogue line
+
+Return ONLY a valid JSON array. No markdown, no explanation.`;
+
+  const response = await withRetry(() => llmDialogue.invoke(prompt));
+  const dialogues = parseJsonSafely<Dialogue[]>(response.content as string);
+
+  // Validate speakers — only allow characters present in this scene
+  return dialogues.filter((d) => scene.charactersPresent.includes(d.speaker));
 }

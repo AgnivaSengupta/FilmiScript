@@ -7,7 +7,7 @@ export const RightSideBar = () => {
     <motion.aside
       initial={{ x: 10, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className="w-120 flex-shrink-0 bg-white border-l border-gray-200 h-full p-6 overflow-y-auto"
+      className="w-180 flex-shrink-0 bg-white border-l border-gray-200 h-full p-6 overflow-y-auto"
     >
       {/* Character Sketch Card */}
       <CharacterSketch/>

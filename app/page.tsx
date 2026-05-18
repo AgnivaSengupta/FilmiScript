@@ -6,6 +6,7 @@ import { SceneCard } from "../components/SceneCard";
 import { InputBox } from "../components/InputBox";
 import { RightSideBar } from "../components/RightSidebar";
 import { Share2 } from "lucide-react";
+import { useScriptStore } from "@/store/useScriptStore";
 
 // --- Variants for smooth motion (optional) ---
 const containerVariants = {
@@ -19,6 +20,8 @@ const itemVariants = {
 };
 
 export default function Dashboard() {
+  const { currentScript, isLoading } = useScriptStore();
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-zinc-50 font-sans text-slate-800">
       {/* --- LEFT SIDEBAR --- */}
@@ -35,10 +38,13 @@ export default function Dashboard() {
           <div className="flex justify-between items-center">
             <div>
               <h2 className="text-3xl font-serif tracking-wider text-slate-900 mb-2">
-                Title
+                {isLoading
+                  ? "Writing your blockbuster..."
+                  : currentScript?.title || "Waiting for Drama..."}
               </h2>
               <p className="text-sm text-gray-500 mb-6">
-                Draft and organize your story scenes.
+                {currentScript?.tagline ||
+                  "Enter a situation below to generate your Bollywood script."}
               </p>
             </div>
 
@@ -46,10 +52,24 @@ export default function Dashboard() {
               <Share2 className="w-5 h-5" />
             </div>
           </div>
-          <div className="overflow-y-auto">
+
+          {/*<div className="overflow-y-auto">
             <SceneCard sceneNumber={1} />
             <SceneCard sceneNumber={2} />
             <SceneCard sceneNumber={3} />
+          </div>*/}
+
+          <div className="space-y-6 pb-20">
+            {isLoading ? (
+              <div className="animate-pulse space-y-4">
+                <div className="h-40 bg-white border border-gray-200 rounded-xl"></div>
+                <div className="h-40 bg-white border border-gray-200 rounded-xl"></div>
+              </div>
+            ) : (
+              currentScript?.scenes.map((scene) => (
+                <SceneCard key={scene.sceneNumber} scene={scene} />
+              ))
+            )}
           </div>
         </div>
 

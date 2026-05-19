@@ -2,7 +2,7 @@
 
 > **AI-powered Bollywood script generator.** Give it a situation and a mood — it writes you a full dramatic screenplay complete with characters, scenes, and over-the-top Bollywood dialogues.
 
-![Preview](Preview.png)
+<img src="Preview.png" alt="Preview" width="500"/>
 ---
 
 ## Features

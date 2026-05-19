@@ -10,7 +10,7 @@ interface RightSidebarProp {
 }
 
 export const RightSideBar = ({ isOpen, onClose }: RightSidebarProp) => {
-  const { currentScript } = useScriptStore();
+  const { currentScript, isLoading } = useScriptStore();
   return (
     <>
       <AnimatePresence>
@@ -50,17 +50,18 @@ export const RightSideBar = ({ isOpen, onClose }: RightSidebarProp) => {
           </button>
         </div>
 
-        {!currentScript && (
+        {/* Character Sketch Card */}
+        <CharacterSketch />
+        <AvatarSection />
+
+        {!currentScript && !isLoading && (
           <div className="w-full h-full flex flex-col items-center justify-center">
-            <div className="flex flex-col items-center justify-center -translate-y-30">          
+            <div className="flex flex-col items-center justify-center -translate-y-30">
               <Image src="/Breeze.png" alt='No Story' width={200} height={200} />
               <h1 className="font-serif text-xl text-center text-gray-500">Generate a Script to get Character Sketch and Avatars</h1>
             </div>
           </div>
         )}
-        {/* Character Sketch Card */}
-        <CharacterSketch />
-        <AvatarSection />
       </motion.aside>
     </>
   );

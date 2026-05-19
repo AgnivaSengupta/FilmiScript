@@ -54,7 +54,7 @@ export default function Dashboard() {
           Open Menu
         </button>*/}
 
-        <MobileNavbar setIsRightSidebarOpen={setIsRightSidebarOpen} setIsLeftSidebarOpen={ setIsLeftSidebarOpen } />
+        <MobileNavbar setIsRightSidebarOpen={setIsRightSidebarOpen} setIsLeftSidebarOpen={setIsLeftSidebarOpen} />
 
         <div className="flex-1 max-w-4xl w-full mx-auto overflow-y-auto no-scrollbar">
           <div className="flex justify-between items-center">
@@ -77,13 +77,12 @@ export default function Dashboard() {
                   ? `Share: /drama/${currentScript.id}`
                   : "Generate a script first"
               }
-              className={`p-1 rounded-sm border transition-all ${
-                currentScript
-                  ? copied
-                    ? "bg-green-100 text-green-600 border-green-300"
-                    : "hover:bg-green-100 hover:text-green-600 cursor-pointer border-gray-200"
-                  : "opacity-30 cursor-not-allowed border-gray-200"
-              }`}
+              className={`p-1 rounded-sm border transition-all ${currentScript
+                ? copied
+                  ? "bg-green-100 text-green-600 border-green-300"
+                  : "hover:bg-green-100 hover:text-green-600 cursor-pointer border-gray-200"
+                : "opacity-30 cursor-not-allowed border-gray-200"
+                }`}
             >
               {copied ? (
                 <Check className="w-5 h-5" />
@@ -96,8 +95,20 @@ export default function Dashboard() {
           <div className="space-y-6 pb-20">
             {isLoading ? (
               <div className="animate-pulse space-y-4">
-                <div className="h-40 bg-white border border-gray-200 rounded-xl"></div>
-                <div className="h-40 bg-white border border-gray-200 rounded-xl"></div>
+                <div className="h-40 bg-white border border-gray-200 rounded-xl animate-pulse">
+
+                  <div className="space-y-2 mb-5 p-5">
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full"></div>
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full"></div>
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full"></div>
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full"></div>
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full"></div>
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full"></div>
+                    <div className="h-1.5 w-full bg-gray-100 rounded-full"></div>
+                  </div>
+
+                </div>
+                {/* <div className="h-40 bg-white border border-gray-200 rounded-xl"></div> */}
               </div>
             ) : !currentScript ? (
               // No script generated yet — show empty state

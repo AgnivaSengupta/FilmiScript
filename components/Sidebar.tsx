@@ -12,25 +12,35 @@ import { HistoryItem } from "@/lib/db/models/Script";
 const HistoryTab = ({
   open,
   item,
+  isActive,
   onClick,
   onDelete,
 }: {
   open: boolean;
   item: HistoryItem;
+  isActive: boolean;
   onClick: () => void;
   onDelete: () => void;
 }) => {
   return (
     <div
       onClick={onClick}
-      className={`group bg-white border border-gray-200 rounded-lg flex items-center relative overflow-hidden shrink-0 transition-all cursor-pointer hover:border-green-400 hover:bg-green-50 ${
-        open ? "h-14 px-3 w-full" : "h-10 w-10 mx-auto"
-      }`}
+      className={`group relative flex items-center overflow-hidden shrink-0 transition-all cursor-pointer rounded-lg border ${open ? "h-14 px-3 w-full" : "h-10 w-10 mx-auto"
+        } ${isActive
+          ? "bg-green-50 border-green-400"
+          : "bg-white border-gray-200 hover:border-green-400 hover:bg-green-50"
+        }`}
     >
+      {/* Active indicator bar */}
+      {isActive && (
+        <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-green-500" />
+      )}
+
       {open ? (
         <>
-          <div className="flex-1 min-w-0">
-            <p className="font-serif text-sm font-semibold text-slate-800 truncate leading-tight">
+          <div className={`flex-1 min-w-0 ${isActive ? "pl-2" : ""}`}>
+            <p className={`font-serif text-sm font-semibold truncate leading-tight ${isActive ? "text-green-800" : "text-slate-800"
+              }`}>
               {item.title}
             </p>
             <p className="text-xs text-gray-400 truncate">{item.mood}</p>
@@ -48,7 +58,8 @@ const HistoryTab = ({
           </button>
         </>
       ) : (
-        <span className="font-serif font-bold text-green-600 text-center w-full">
+        <span className={`font-serif font-bold text-center w-full ${isActive ? "text-green-600" : "text-green-600"
+          }`}>
           {item.title.charAt(0)}
         </span>
       )}
@@ -60,7 +71,7 @@ const HistoryTab = ({
 
 export const Sidebar = ({
   isMobileOpen = false,
-  onMobileClose = () => {},
+  onMobileClose = () => { },
 }: {
   isMobileOpen?: boolean;
   onMobileClose?: () => void;
@@ -71,6 +82,7 @@ export const Sidebar = ({
     fetchHistory,
     loadFromHistory,
     deleteScript,
+    currentScript,
   } = useScriptStore();
 
   // Fetch history from DB on every mount — this is what persists over reloads
@@ -99,11 +111,8 @@ export const Sidebar = ({
         animate={{ x: isMobileOpen ? 0 : "-100%" }}
         transition={{ type: "spring", bounce: 0, duration: 0.4 }}
         className={`
-                /* Mobile: Fixed Drawer */
                 fixed inset-y-0 left-0 z-50 w-64 max-w-[80%]
-                /* Desktop: Standard Flow & Width Toggle */
                 lg:relative lg:inset-auto lg:z-0 ${desktopOpen ? "lg:w-64" : "lg:w-20"}
-                /* Layout & Overrides */
                 shrink-0 bg-white border-r border-gray-200 flex flex-col h-full p-4 overflow-hidden
                 lg:!transform-none transition-[width] duration-300
               `}
@@ -152,9 +161,8 @@ export const Sidebar = ({
         {/* New Chat Button */}
         <button
           onClick={() => useScriptStore.setState({ currentScript: null })}
-          className={`flex items-center justify-center gap-2 w-full bg-green-500 text-white font-serif py-2 rounded-lg mb-6 transition-all hover:bg-green-600 shadow-sm cursor-pointer ${
-            isOpenUI ? "px-4 text-xl" : "px-0 text-sm"
-          }`}
+          className={`flex items-center justify-center gap-2 w-full bg-green-500 text-white font-serif py-2 rounded-lg mb-6 transition-all hover:bg-green-600 shadow-sm cursor-pointer ${isOpenUI ? "px-4 text-xl" : "px-0 text-sm"
+            }`}
         >
           <Plus className="w-5 h-5 shrink-0" />
           {isOpenUI && <span className="whitespace-nowrap">New Chat</span>}
@@ -179,9 +187,10 @@ export const Sidebar = ({
               key={item.id}
               open={isOpenUI}
               item={item}
+              isActive={item.id === currentScript?.id}
               onClick={() => {
                 loadFromHistory(item.id);
-                if (isMobileOpen) onMobileClose(); // Auto-close drawer on mobile
+                if (isMobileOpen) onMobileClose();
               }}
               onDelete={() => deleteScript(item.id)}
             />

@@ -1,9 +1,21 @@
-import { HistoryItem } from '@/lib/db/models/Script';
-import { create } from 'zustand'
+import { HistoryItem } from "@/lib/db/models/Script";
+import { create } from "zustand";
 
-export type Dialogue = { speaker: string, line: string }
-export type Character = { name: string, role: string, personality: string, description: string, avatar: string }
-export type Scene = { sceneNumber: number, title: string, description: string, charactersPresent: string[], dialogue: Dialogue[] }
+export type Dialogue = { speaker: string; line: string };
+export type Character = {
+  name: string;
+  role: string;
+  personality: string;
+  description: string;
+  avatar: string;
+};
+export type Scene = {
+  sceneNumber: number;
+  title: string;
+  description: string;
+  charactersPresent: string[];
+  dialogue: Dialogue[];
+};
 
 export type ScriptData = {
   id: string; // Useful for the shareable link later!
@@ -17,7 +29,7 @@ interface ScriptStore {
   currentScript: ScriptData | null;
   history: HistoryItem[];
   isLoading: boolean;
-  regeneratingSceneNumber: number | null;  // tracks which scene is spinning
+  regeneratingSceneNumber: number | null; // tracks which scene is spinning
   error: string | null;
 
   generateScript: (situation: string, mood: string) => Promise<void>;
@@ -27,7 +39,6 @@ interface ScriptStore {
   deleteScript: (id: string) => Promise<void>;
   clearError: () => void;
 }
-
 
 export const useScriptStore = create<ScriptStore>((set, get) => ({
   currentScript: null,
@@ -41,13 +52,13 @@ export const useScriptStore = create<ScriptStore>((set, get) => ({
 
     try {
       // Replace this with your actual OpenRouter API call
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ situation, mood })
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ situation, mood }),
       });
 
-      if (!response.ok) throw new Error('Failed to generate script');
+      if (!response.ok) throw new Error("Failed to generate script");
 
       const newScript: ScriptData = await response.json();
 
@@ -56,38 +67,52 @@ export const useScriptStore = create<ScriptStore>((set, get) => ({
         title: newScript.title,
         tagline: newScript.tagline,
         mood: mood,
-        createdAt: new Date().toISOString()
-      }
+        createdAt: new Date().toISOString(),
+      };
       set((state) => ({
         currentScript: newScript,
         history: [historyForm, ...state.history], // Add to history automatically
-        isLoading: false
+        isLoading: false,
       }));
-
-    } catch (err: any) {
-      set({ error: err.message || 'Something went wrong', isLoading: false });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Something went wrong';
+      
+      set({ 
+        error: errorMessage, 
+        isLoading: false, 
+      });
     }
   },
 
   fetchHistory: async () => {
     try {
-      const response = await fetch('/api/scripts');
-      if (!response.ok) throw new Error('Failed to fetch history');
+      const response = await fetch("/api/scripts");
+      if (!response.ok) throw new Error("Failed to fetch history");
       const history: HistoryItem[] = await response.json();
       set({ history });
-    } catch (error: any) {
-      set({ error: error.message || 'Failed to fetch history' });
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch history";
+
+      set({
+        error: errorMessage,
+      });
     }
   },
 
   loadFromHistory: async (id) => {
     try {
       const response = await fetch(`/api/scripts/${id}`);
-      if (!response.ok) throw new Error('Failed to load script');
+      if (!response.ok) throw new Error("Failed to load script");
       const script: ScriptData = await response.json();
       set({ currentScript: script });
-    } catch (err: any) {
-      set({ error: err.message || 'Failed to load script' });
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load script";
+
+      set({
+        error: errorMessage,
+      });
     }
   },
 
@@ -100,12 +125,12 @@ export const useScriptStore = create<ScriptStore>((set, get) => ({
       const response = await fetch(
         `/api/scripts/${currentScript.id}/regenerate-scene`,
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ sceneNumber }),
-        }
+        },
       );
-      if (!response.ok) throw new Error('Regeneration failed');
+      if (!response.ok) throw new Error("Regeneration failed");
 
       const newDialogue = await response.json();
 
@@ -118,20 +143,26 @@ export const useScriptStore = create<ScriptStore>((set, get) => ({
               scenes: state.currentScript.scenes.map((s) =>
                 s.sceneNumber === sceneNumber
                   ? { ...s, dialogue: newDialogue }
-                  : s
+                  : s,
               ),
             }
           : null,
       }));
-    } catch (err: any) {
-      set({ error: err.message || 'Regeneration failed', regeneratingSceneNumber: null });
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Regeneration failed";
+
+      set({
+        error: errorMessage,
+        regeneratingSceneNumber: null,
+      });
     }
   },
 
   deleteScript: async (id) => {
     try {
-      const response = await fetch(`/api/scripts/${id}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Failed to delete script');
+      const response = await fetch(`/api/scripts/${id}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Failed to delete script");
 
       set((state) => ({
         // Remove from sidebar list
@@ -140,10 +171,15 @@ export const useScriptStore = create<ScriptStore>((set, get) => ({
         currentScript:
           state.currentScript?.id === id ? null : state.currentScript,
       }));
-    } catch (err: any) {
-      set({ error: err.message || 'Failed to delete script' });
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to delete script";
+
+      set({
+        error: errorMessage,
+      });
     }
   },
 
-  clearError: () => set({ error: null })
+  clearError: () => set({ error: null }),
 }));

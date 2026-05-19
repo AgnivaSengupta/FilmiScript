@@ -3,9 +3,9 @@
 import { Scene } from "@/store/useScriptStore";
 import { useScriptStore } from "@/store/useScriptStore";
 import { Copy, RefreshCw } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 
-const itemVariants = {
+const itemVariants: Variants ={
   hidden: { y: 20, opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } },
 };

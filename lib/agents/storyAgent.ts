@@ -29,13 +29,14 @@ export async function storyAgentNode(
  Write a SHORT story synopsis based on the situation, strictly following the requested "${mood}" mood.
 
  Return a JSON object with these EXACT fields:
- - "title": A catchy Bollywood-style title fitting the ${mood} genre (5 words max, no quotes inside)
+ - "title": A unique catchy heavily Bollywood-style title fitting the ${mood} genre (5 words max, no quotes inside)
  - "tagline": A punchy one-liner tagline that teases the story's tone
- - "plot": Story synopsis (150-200 words). Must include:
+ - "plot": Story synopsis (100 words). Must include:
      • Setting (time and place)
      • 2-4 character names with one-line roles each
      • Central conflict (tailored to the ${mood} mood)
      • A hint of the resolution
+ - "core_trope": Name one classic Bollywood trope used here (e.g., "Punar Janam", "Rich Girl/Poor Boy", "Judwaa", "Shaadi Mandap Crash").
 
  CRITICAL TONE INSTRUCTIONS:
  Do NOT default to heavy drama, betrayal, or sacrifice unless the mood specifically calls for it.

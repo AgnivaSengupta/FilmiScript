@@ -8,10 +8,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useScriptStore } from "@/store/useScriptStore";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 import { useState } from "react";
 
-const itemVariants = {
+const itemVariants: Variants ={
   hidden: { y: 20, opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } },
 };
@@ -37,10 +37,10 @@ export const InputBox = () => {
             onChange={(e) => setSituation(e.target.value)}
             disabled={isLoading}
           ></textarea>
-          <div className="flex justify-between items-center mt-1">
-            <span className="text-xs text-gray-400 font-medium">
+          <div className="flex justify-end items-center mt-1">
+            {/*<span className="text-xs text-gray-400 font-medium">
               0 / 200 words
-            </span>
+            </span>*/}
 
             <div className="flex items-center gap-5">
               <DropdownMenu>

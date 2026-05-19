@@ -34,11 +34,9 @@ export async function withRetry<T>(
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       return await fn();
-    } catch (error: any) {
-      const isRateLimit =
-        error?.status === 429 ||
-        error?.message?.toLowerCase().includes("rate limit") ||
-        error?.message?.toLowerCase().includes("too many requests");
+    } catch (error) {
+      const errMessage = error instanceof Error ? error.message.toLowerCase() : "";
+        const isRateLimit = errMessage.includes("rate limit") || errMessage.includes("too many requests");
 
       if (!isRateLimit || attempt === maxRetries - 1) throw error;
 

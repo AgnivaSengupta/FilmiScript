@@ -17,7 +17,7 @@ export const runtime = "nodejs";
  */
 export async function POST(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -27,7 +27,10 @@ export async function POST(
       return Response.json({ error: "Invalid script ID" }, { status: 400 });
     }
     if (typeof sceneNumber !== "number") {
-      return Response.json({ error: "sceneNumber is required" }, { status: 400 });
+      return Response.json(
+        { error: "sceneNumber is required" },
+        { status: 400 },
+      );
     }
 
     await connectDB();
@@ -39,10 +42,15 @@ export async function POST(
 
     const scene = script.scenes.find((s) => s.sceneNumber === sceneNumber);
     if (!scene) {
-      return Response.json({ error: `Scene ${sceneNumber} not found` }, { status: 404 });
+      return Response.json(
+        { error: `Scene ${sceneNumber} not found` },
+        { status: 404 },
+      );
     }
 
-    console.log(`[RegenerateScene] Script "${script.title}" — Scene ${sceneNumber} "${scene.title}"`);
+    console.log(
+      `[RegenerateScene] Script "${script.title}" — Scene ${sceneNumber} "${scene.title}"`,
+    );
 
     // Generate fresh dialogues for this scene only
     const newDialogues = await generateSingleSceneDialogue({
@@ -67,17 +75,18 @@ export async function POST(
     await Script.findOneAndUpdate(
       { _id: id },
       { $set: { "scenes.$[elem].dialogue": newDialogues } },
-      { arrayFilters: [{ "elem.sceneNumber": sceneNumber }] }
+      { arrayFilters: [{ "elem.sceneNumber": sceneNumber }] },
     );
 
     console.log(`[RegenerateScene] Done — ${newDialogues.length} new lines`);
     return Response.json(newDialogues);
-
-  } catch (error: any) {
+  } catch (error) {
     console.error("[RegenerateScene] Error:", error);
     return Response.json(
-      { error: error.message ?? "Regeneration failed" },
-      { status: 500 }
+      {
+        error: error instanceof Error ? error.message : "Regeneration failed",
+      },
+      { status: 500 },
     );
   }
 }

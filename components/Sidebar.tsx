@@ -136,7 +136,7 @@ export const Sidebar = ({
 
           {!isMobileOpen && (
             <PanelLeft
-              onClick={() => setDesktopOpen(!open)}
+              onClick={() => setDesktopOpen(!isOpenUI)}
               className="w-5 h-5 cursor-pointer text-gray-500 hover:text-gray-900 shrink-0 transition-colors"
             />
           )}
@@ -189,14 +189,14 @@ export const Sidebar = ({
         </div>
 
         {/* Log Out Button */}
-        <button
+        {/*<button
           className={`mt-auto border border-gray-300 bg-zinc-100 hover:bg-zinc-200 py-2 rounded-lg transition-colors font-medium font-serif cursor-pointer flex items-center justify-center gap-2 ${
             isOpenUI ? "text-lg px-4" : "text-sm px-0"
           }`}
         >
           {!open && <LogOut className="w-4 h-4 shrink-0 text-gray-600" />}
           {isOpenUI && <span className="whitespace-nowrap">Log Out</span>}
-        </button>
+        </button>*/}
       </motion.aside>
     </>
   );

@@ -1,6 +1,7 @@
 import { buildGraph } from "@/lib/agents/graph";
 import Script, { toScriptData } from "@/lib/db/models/Script";
 import connectDB from "@/lib/db/mongodb";
+import { Scene } from "@/store/useScriptStore";
 
 // Use Node.js runtime — LangGraph and Groq SDK require Node APIs
 export const runtime = "nodejs";
@@ -13,11 +14,13 @@ export async function POST(request: Request) {
     if (!situation?.trim() || !mood?.trim()) {
       return Response.json(
         { error: "Both 'situation' and 'mood' are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    console.log(`[API] Generating script — mood: "${mood}", situation: "${situation}"`);
+    console.log(
+      `[API] Generating script — mood: "${mood}", situation: "${situation}"`,
+    );
 
     const graph = buildGraph();
 
@@ -33,12 +36,12 @@ export async function POST(request: Request) {
     if (!result.story) {
       return Response.json(
         { error: "Story generation returned no output" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Merge the dialogue records back into their respective scenes
-    const scenesWithDialogue = result.scenes.map((scene: any) => ({
+    const scenesWithDialogue = result.scenes.map((scene: Scene) => ({
       ...scene,
       dialogue: result.dialogues[scene.sceneNumber] ?? [],
     }));
@@ -57,12 +60,14 @@ export async function POST(request: Request) {
 
     console.log(`[API] Done — "${finalScriptData.title}"`);
     return Response.json(finalScriptData);
-
-  } catch (error: any) {
+  } catch (error) {
     console.error("[API] Generation error:", error);
     return Response.json(
-      { error: error.message ?? "Script generation failed" },
-      { status: 500 }
+      {
+        error:
+          error instanceof Error ? error.message : "Script generation failed",
+      },
+      { status: 500 },
     );
   }
 }

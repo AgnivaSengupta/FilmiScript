@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -26,10 +26,13 @@ export async function GET(
     }
 
     return Response.json(toScriptData(script));
-  } catch (error: any) {
+  } catch (error) {
     return Response.json(
-      { error: error.message ?? "Failed to fetch script" },
-      { status: 500 }
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to fetch the script",
+      },
+      { status: 500 },
     );
   }
 }
@@ -40,7 +43,7 @@ export async function GET(
  */
 export async function DELETE(
   _req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -58,11 +61,13 @@ export async function DELETE(
 
     console.log(`[API] Deleted script "${deleted.title}" (${id})`);
     return Response.json({ success: true });
-
-  } catch (error: any) {
+  } catch (error) {
     return Response.json(
-      { error: error.message ?? "Failed to delete script" },
-      { status: 500 }
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to delete script",
+      },
+      { status: 500 },
     );
   }
 }

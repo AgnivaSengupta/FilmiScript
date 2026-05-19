@@ -5,6 +5,7 @@ import { Types } from "mongoose";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { ScriptData } from "@/store/useScriptStore";
+import Link from "next/link";
 
 // ── Metadata (SEO + Open Graph for link previews) ─────────────────────────────
 
@@ -51,32 +52,28 @@ export default async function DramaPage({
   const situation = doc.situation as string;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white font-sans">
-      {/* ── Film strip top bar ── */}
-      <div className="w-full h-8 bg-amber-400 flex items-center overflow-hidden">
-        <div className="flex gap-1 px-2 animate-none">
-          {Array.from({ length: 60 }).map((_, i) => (
-            <div key={i} className="w-6 h-5 bg-slate-900 rounded-sm shrink-0" />
-          ))}
-        </div>
-      </div>
-
-      <main className="max-w-3xl mx-auto px-6 py-16">
+    <div className="min-h-screen w-full bg-zinc-50 font-sans text-slate-800">
+      <main className="max-w-4xl mx-auto px-6 py-12">
         {/* ── Header ── */}
-        <div className="text-center mb-14">
-          <p className="text-xs uppercase tracking-[0.3em] text-amber-400 font-bold mb-4">
-            FilmiScript Presents
-          </p>
-          <h1 className="text-5xl font-serif font-bold mb-4 leading-tight bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
+        <div className="mb-12 text-center flex flex-col items-center">
+          <Link 
+            href="/" 
+            className="inline-block mb-8 text-xs font-bold text-indigo-600 hover:text-indigo-800 uppercase tracking-widest transition-colors"
+          >
+            &larr; Back to FilmiScript
+          </Link>
+          <h1 className="text-4xl md:text-5xl font-serif font-bold tracking-wider text-slate-900 mb-4">
             {script.title}
           </h1>
-          <p className="text-lg text-indigo-200 italic mb-6">&ldquo;{script.tagline}&rdquo;</p>
+          <p className="text-lg text-gray-500 italic mb-6 max-w-2xl">
+            &ldquo;{script.tagline}&rdquo;
+          </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
-            <span className="text-xs bg-indigo-800/60 border border-indigo-600/40 px-3 py-1 rounded-full text-indigo-200">
+            <span className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full border border-indigo-100">
               {mood}
             </span>
-            <span className="text-indigo-500">·</span>
-            <span className="text-xs text-indigo-300 max-w-xs text-center truncate">
+            <span className="text-gray-300">·</span>
+            <span className="text-sm text-gray-500 max-w-md text-center">
               {situation}
             </span>
           </div>
@@ -84,117 +81,108 @@ export default async function DramaPage({
 
         {/* ── Characters ── */}
         <section className="mb-12">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-amber-400/70 mb-5 text-center">
+          <h2 className="text-sm font-bold tracking-wide text-gray-400 uppercase mb-6 text-center">
             Cast of Characters
           </h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {script.characters.map((char) => (
               <div
                 key={char.name}
-                className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm"
+                className="bg-white rounded-xl border border-gray-200 p-5 text-center shadow-sm"
               >
-                <div className="text-3xl mb-2">{char.avatar}</div>
-                <p className="font-serif font-semibold text-white text-sm">{char.name}</p>
-                <p className="text-[11px] text-indigo-300 capitalize">{char.role.replace("_", " ")}</p>
-                <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">{char.personality}</p>
+                <div className="text-4xl mb-3">{char.avatar}</div>
+                <p className="font-serif font-semibold text-slate-800 text-lg">{char.name}</p>
+                <p className="text-xs text-indigo-600 capitalize font-medium">{char.role.replace("_", " ")}</p>
+                <p className="text-xs text-gray-500 mt-3 line-clamp-3">{char.personality}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* ── Scenes ── */}
-        <section className="space-y-10">
+        <section className="space-y-6">
+          <h2 className="text-sm font-bold tracking-wide text-gray-400 uppercase mb-6 text-center">
+            The Script
+          </h2>
+          
           {script.scenes.map((scene) => (
-            <div key={scene.sceneNumber} className="relative">
-              {/* Scene header */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-6 h-px bg-amber-400/40 shrink-0" />
-                <span className="text-[10px] font-bold tracking-widest text-amber-400/80 uppercase whitespace-nowrap">
-                  Scene {scene.sceneNumber}
+            <div 
+              key={scene.sceneNumber} 
+              className="bg-white rounded-xl border border-gray-200 shadow-sm p-6"
+            >
+              {/* Scene Header */}
+              <div className="flex items-center gap-2 border-b border-gray-100 pb-3 mb-4">
+                <span className="inline-block w-2 h-2 rounded-full bg-gray-300"></span>
+                <span className="text-xs font-bold tracking-wide text-gray-500 uppercase">
+                  Scene {scene.sceneNumber} : {scene.title}
                 </span>
-                <div className="flex-1 h-px bg-white/10" />
               </div>
 
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-                <h3 className="font-serif text-xl text-white font-semibold mb-2">
-                  {scene.title}
-                </h3>
-                <p className="text-sm text-indigo-300 italic mb-5 border-l-2 border-indigo-600/50 pl-3">
+              {/* Scene description + characters */}
+              <div className="mb-6 space-y-3">
+                <p className="text-sm text-gray-700 italic border-l-2 border-gray-200 pl-3">
                   {scene.description}
                 </p>
 
-                {/* Characters present */}
-                <div className="flex gap-1.5 flex-wrap mb-5">
-                  {scene.charactersPresent.map((name) => {
-                    const char = script.characters.find((c) => c.name === name);
-                    return (
+                <div className="flex gap-2">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase mt-0.5">
+                    Present:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {scene.charactersPresent.map((char, idx) => (
                       <span
-                        key={name}
-                        className="text-xs bg-indigo-900/60 border border-indigo-700/40 text-indigo-200 px-2 py-0.5 rounded-md"
-                      >
-                        {char?.avatar} {name}
-                      </span>
-                    );
-                  })}
-                </div>
-
-                {/* Dialogue */}
-                <div className="space-y-4">
-                  {scene.dialogue.map((line, idx) => {
-                    const char = script.characters.find((c) => c.name === line.speaker);
-                    const isPrimary =
-                      scene.charactersPresent.indexOf(line.speaker) % 2 === 0;
-                    return (
-                      <div
                         key={idx}
-                        className={`flex gap-3 ${!isPrimary ? "flex-row-reverse" : ""}`}
+                        className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md border border-indigo-100"
                       >
-                        <div className="text-xl shrink-0 mt-1">{char?.avatar ?? "🎭"}</div>
-                        <div className={`max-w-[80%] ${!isPrimary ? "items-end" : ""} flex flex-col`}>
-                          <span
-                            className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${
-                              isPrimary ? "text-blue-300" : "text-rose-300"
-                            }`}
-                          >
-                            {line.speaker}
-                          </span>
-                          <p
-                            className={`text-sm px-4 py-2.5 rounded-2xl leading-relaxed ${
-                              isPrimary
-                                ? "bg-indigo-800/60 text-indigo-100 rounded-tl-none border border-indigo-700/30"
-                                : "bg-rose-900/40 text-rose-100 rounded-tr-none border border-rose-800/30"
-                            }`}
-                          >
-                            {line.line}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
+                        {char}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+              </div>
+
+              {/* Dialogue layout matching SceneCard.tsx */}
+              <div className="space-y-4">
+                {scene.dialogue.map((line, idx) => {
+                  const isPrimary =
+                    scene.charactersPresent.indexOf(line.speaker) % 2 === 0;
+                  return (
+                    <div
+                      key={idx}
+                      className={`flex items-start gap-3 ${!isPrimary ? "ml-8" : ""}`}
+                    >
+                      <div
+                        className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${isPrimary ? "bg-blue-400" : "bg-rose-400"}`}
+                      ></div>
+                      <div>
+                        <span className="text-xs font-bold text-gray-900 uppercase block mb-0.5">
+                          {line.speaker}
+                        </span>
+                        <p className="text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100">
+                          {line.line}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}
         </section>
 
         {/* ── Footer ── */}
-        <div className="text-center mt-16 pt-8 border-t border-white/10">
-          <p className="text-xs text-indigo-500 mb-1">Generated with</p>
-          <p className="font-serif text-lg text-amber-400 font-bold">FilmiScript</p>
-          <p className="text-xs text-indigo-600 mt-1">
-            Create your own Bollywood drama at FilmiScript
-          </p>
+        <div className="mt-16 text-center border-t border-gray-200 pt-10 pb-6">
+          <Link href="/" className="inline-block group">
+            <p className="text-xs text-gray-400 mb-1">Generated with</p>
+            <p className="font-serif text-xl text-slate-800 font-bold group-hover:text-indigo-600 transition-colors">
+              FilmiScript
+            </p>
+            <p className="text-xs text-indigo-500 mt-2 font-medium group-hover:underline">
+              Create your own Bollywood drama &rarr;
+            </p>
+          </Link>
         </div>
       </main>
-
-      {/* ── Film strip bottom bar ── */}
-      <div className="w-full h-8 bg-amber-400 flex items-center overflow-hidden">
-        <div className="flex gap-1 px-2">
-          {Array.from({ length: 60 }).map((_, i) => (
-            <div key={i} className="w-6 h-5 bg-slate-900 rounded-sm shrink-0" />
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

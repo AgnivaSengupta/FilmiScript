@@ -2,7 +2,12 @@ import { Menu} from "lucide-react"
 import Image from "next/image"
 import { Button } from "./ui/button"
 
-export const MobileNavbar = ({setIsRightSidebarOpen, setIsLeftSidebarOpen}) => {
+interface MobileNavbarProps {
+  setIsRightSidebarOpen: (isOpen: boolean) => void;
+  setIsLeftSidebarOpen: (isOpen: boolean) => void;
+}
+
+export const MobileNavbar = ({setIsRightSidebarOpen, setIsLeftSidebarOpen}: MobileNavbarProps) => {
   return (
     <div className="md:hidden flex justify-between items-center w-full mb-10">
       <Menu

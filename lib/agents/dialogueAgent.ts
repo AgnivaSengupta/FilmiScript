@@ -58,9 +58,9 @@ Rules:
 1. ONLY use characters from this list: ${JSON.stringify(scene.charactersPresent)}
 2. Each character MUST speak in their established personality from the Character Bible above
 3. Naturally weave in Hindi/Urdu phrases (e.g., "Yaar", "Bas!", "Tum samjhe nahi", "Kya baat hai", "Nahi!", "Sach mein?")
-4. Use dramatic pauses with "..." and add stage directions in [square brackets]
+4. Use dramatic pauses with "..." and add EXTREME stage directions in [square brackets] (e.g., [Slaps him], [Camera zooms into her tearful eyes], [Points gun with a trembling hand]).
 5. Build emotional tension — the intensity must match mood: "${mood}"
-6. Dialogues should feel cinematic, not conversational
+6. NO PARAGRAPHS. Dialogues must be punchy, rhythmic, and highly theatrical "seeti-maar" (whistle-worthy) one-liners or dramatic comebacks.
 
 Return a JSON array where each item has:
 - "speaker": character name (must be from the present characters list)
@@ -100,8 +100,14 @@ Return ONLY a valid JSON array. No markdown, no explanation.`;
  * Called directly by the regenerate API route — no full graph run needed.
  */
 export async function generateSingleSceneDialogue(params: {
-  scene: Pick<Scene, "sceneNumber" | "title" | "description" | "charactersPresent">;
-  characters: Pick<Character, "name" | "role" | "personality" | "description">[];
+  scene: Pick<
+    Scene,
+    "sceneNumber" | "title" | "description" | "charactersPresent"
+  >;
+  characters: Pick<
+    Character,
+    "name" | "role" | "personality" | "description"
+  >[];
   storyTitle: string;
   storySituation: string; // user's original situation (used as plot context)
   mood: string;

@@ -28,7 +28,7 @@ export async function sceneAgentNode(
     .map((c) => `• ${c.name} (${c.role}): ${c.personality}`)
     .join("\n");
 
-  const prompt = `You are a Bollywood scene breakdown writer.
+  const prompt = `You are a energetic Bollywood scene breakdown writer.
 
 === STORY ===
 Title: ${story.title}
@@ -41,8 +41,8 @@ ${charSummary}
 Mood: ${mood}
 Divide this story into exactly 2-4 dramatic scenes. Return a JSON array where each scene has:
 - "sceneNumber": integer (1, 2, 3...)
-- "title": A dramatic scene title (e.g., "The Revelation", "Storm of Betrayal", "Price of Silence")
-- "description": What happens in this scene (2-3 sentences). Be specific about actions and emotions.
+- "title": A melodramatic scene title (e.g., "The Revelation", "Storm of Betrayal", "Price of Silence")
+- "description": What happens in this scene (1-2 sentences).Maximize Bollywood style drama over logic. Mention the cinematic setup (e.g., "Heavy rain at a deserted railway station," "A brightly lit, chaotic sangeet ceremony"). Be specific about actions and emotions.
 - "charactersPresent": Array of character names. ONLY use names from this list: ${JSON.stringify(charNames)}
 
 Rules:

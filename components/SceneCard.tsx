@@ -5,7 +5,7 @@ import { useScriptStore } from "@/store/useScriptStore";
 import { Copy, RefreshCw } from "lucide-react";
 import { motion, Variants } from "motion/react";
 
-const itemVariants: Variants ={
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } },
 };
@@ -103,16 +103,16 @@ export const SceneCard = ({ scene }: { scene: Scene }) => {
             return (
               <div
                 key={idx}
-                className={`flex items-start gap-3 relative ${!isPrimary ? "ml-8" : ""}`}
+                className={`flex items-start gap-3 ${!isPrimary ? "ml-8" : ""}`}
               >
                 <div
-                  className={`w-2 h-2 mt-1.5 rounded-full shrink-0 absolute ${isPrimary ? "bg-blue-400" : "bg-rose-400 right-25"}`}
+                  className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${isPrimary ? "bg-blue-400" : "bg-rose-400"}`}
                 ></div>
-                <div className="mt-0.5">
-                  <span className={`text-xs font-bold text-gray-900 uppercase block mb-0.5 absolute ${isPrimary ? "left-3" : "right-13"}`}>
+                <div>
+                  <span className="text-xs font-bold text-gray-900 uppercase block mb-0.5">
                     {line.speaker}
                   </span>
-                  <p className="text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100 mt-5">
+                  <p className="text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100">
                     {line.line}
                   </p>
                 </div>

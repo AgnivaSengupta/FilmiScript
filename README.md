@@ -2,9 +2,10 @@
 
 > **AI-powered Bollywood script generator.** Give it a situation and a mood — it writes you a full dramatic screenplay complete with characters, scenes, and over-the-top Bollywood dialogues.
 
+![Preview](/Preview.png)
 ---
 
-## ✨ Features
+## Features
 
 | Feature | Description |
 |---|---|
@@ -18,7 +19,7 @@
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -33,7 +34,7 @@
 
 ---
 
-## 🏗 Architecture
+## Architecture
 
 ### The 4-Agent Pipeline
 
@@ -74,7 +75,7 @@ User Input (situation + mood)
 
 ---
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```
 deepshorts/
@@ -118,7 +119,7 @@ deepshorts/
 
 ---
 
-## 🚀 Setup
+## Setup
 
 ### Prerequisites
 
@@ -168,35 +169,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | `POST` | `/api/scripts/[id]/regenerate-scene` | Re-generate one scene's dialogues |
 | `GET` | `/api/health` | Health check |
 
-### `POST /api/generate`
-
-```json
-// Request
-{ "situation": "Two AIs fight at a tech conference", "mood": "Dramatic" }
-
-// Response — ScriptData shape
-{
-  "id": "682a1b2c3d4e5f6a7b8c9d0e",
-  "title": "Digital Dhadkan",
-  "tagline": "When silicon hearts collide...",
-  "characters": [...],
-  "scenes": [{ "sceneNumber": 1, "dialogue": [...], ... }]
-}
-```
-
-### `POST /api/scripts/[id]/regenerate-scene`
-
-```json
-// Request
-{ "sceneNumber": 2 }
-
-// Response — new Dialogue[]
-[{ "speaker": "Claude Mythos", "line": "Yaar... tum samjhe nahi!" }]
-```
-
 ---
 
-## ⚡ Rate Limit Strategy (Groq Free Tier)
+## Rate Limit Strategy (Groq Free Tier)
 
 | Problem | Solution |
 |---|---|
@@ -207,7 +182,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## 🔗 Shareable Links
+## Shareable Links
 
 Every generated script gets a public URL:
 
@@ -221,10 +196,5 @@ https://your-app.com/drama/682a1b2c3d4e5f6a7b8c9d0e
 
 ---
 
-## 🤝 Contributing
 
-PRs welcome. For major changes, open an issue first.
-
----
-
-*Built with ❤️ and drama by [Agniva Sengupta](https://github.com/Agniva-Sengupta)*
+*Built with ❤️ and 🍵 by [Agniva Sengupta](https://github.com/Agniva-Sengupta)*

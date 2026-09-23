@@ -7,7 +7,7 @@ if (!process.env.GROQ_API_KEY) {
 
 // Primary model — best free-tier creative model
 export const llm = new ChatGroq({
-  model: "llama-3.3-70b-versatile",
+  model: "openai/gpt-oss-120b",
   temperature: 0.7,
   maxTokens: 1024,
   apiKey: process.env.GROQ_API_KEY,
@@ -15,7 +15,7 @@ export const llm = new ChatGroq({
 
 // Tighter budget for dialogue (called once per scene to stay under TPM limits)
 export const llmDialogue = new ChatGroq({
-  model: "llama-3.3-70b-versatile",
+  model: "openai/gpt-oss-120b",
   temperature: 0.8, // Slightly more creative for dialogue
   maxTokens: 800,
   apiKey: process.env.GROQ_API_KEY,

@@ -9,7 +9,8 @@ if (!process.env.GROQ_API_KEY) {
 export const llm = new ChatGroq({
   model: "openai/gpt-oss-120b",
   temperature: 0.7,
-  maxTokens: 1024,
+  maxTokens: 4096,
+  reasoningEffort: "low",
   apiKey: process.env.GROQ_API_KEY,
 });
 
@@ -17,7 +18,8 @@ export const llm = new ChatGroq({
 export const llmDialogue = new ChatGroq({
   model: "openai/gpt-oss-120b",
   temperature: 0.8, // Slightly more creative for dialogue
-  maxTokens: 800,
+  maxTokens: 4096,
+  reasoningEffort: "low",
   apiKey: process.env.GROQ_API_KEY,
 });
 
